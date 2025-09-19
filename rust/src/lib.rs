@@ -36,46 +36,46 @@ impl GildedRose {
             if self.items[i].name == "Sulfuras, Hand of Ragnaros" {
                 continue;
             }
-            if self.items[i].name != "Aged Brie" && self.items[i].name != "Backstage passes to a TAFKAL80ETC concert"
-            {
-                if self.items[i].quality > 0 {
-                    self.items[i].quality = self.items[i].quality - 1;
-                }
-            } else {
-                if self.items[i].quality < 50 {
-                    self.items[i].quality = self.items[i].quality + 1;
-
-                    if self.items[i].name == "Backstage passes to a TAFKAL80ETC concert" {
-                        if self.items[i].sell_in < 11 {
-                            if self.items[i].quality < 50 {
-                                self.items[i].quality = self.items[i].quality + 1;
-                            }
+            self.items[i].sell_in = self.items[i].sell_in - 1;
+            match self.items[i].name.as_str() {
+                "Aged Brie" => {
+                    if self.items[i].sell_in < 0 {
+                        if self.items[i].quality < 49 {
+                            self.items[i].quality = self.items[i].quality + 2;
                         }
-
-                        if self.items[i].sell_in < 6 {
-                            if self.items[i].quality < 50 {
-                                self.items[i].quality = self.items[i].quality + 1;
-                            }
+                    } else {
+                        if self.items[i].quality < 50 {
+                            self.items[i].quality = self.items[i].quality + 1;
                         }
                     }
                 }
-            }
-
-            self.items[i].sell_in = self.items[i].sell_in - 1;
-            
-
-            if self.items[i].sell_in < 0 {
-                if self.items[i].name != "Aged Brie" {
-                    if self.items[i].name != "Backstage passes to a TAFKAL80ETC concert" {
+                "Backstage passes to a TAFKAL80ETC concert" => {
+                    if self.items[i].sell_in >= 0 {
+                        if self.items[i].quality < 50 {
+                            if self.items[i].sell_in < 6 {
+                                if self.items[i].quality < 49 {
+                                    self.items[i].quality = self.items[i].quality + 3;
+                                }
+                            } else if self.items[i].sell_in < 11 {
+                                if self.items[i].quality < 48 {
+                                    self.items[i].quality = self.items[i].quality + 2;
+                                }
+                            } else {
+                                self.items[i].quality = self.items[i].quality + 1;
+                            }
+                        }
+                    } else {
+                        self.items[i].quality = 0;
+                    }
+                }
+                _ => {
+                    if self.items[i].sell_in < 0 {
                         if self.items[i].quality > 0 {
                             self.items[i].quality = self.items[i].quality - 1;
                         }
-                    } else {
-                        self.items[i].quality = self.items[i].quality - self.items[i].quality;
                     }
-                } else {
-                    if self.items[i].quality < 50 {
-                        self.items[i].quality = self.items[i].quality + 1;
+                    if self.items[i].quality > 0 {
+                        self.items[i].quality = self.items[i].quality - 1;
                     }
                 }
             }
