@@ -1,6 +1,4 @@
-mod gildedrose;
-
-use gildedrose::{GildedRose, Item};
+use rust::{GildedRose, Item};
 
 fn main() {
     let items = vec![
