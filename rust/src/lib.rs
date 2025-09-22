@@ -42,41 +42,39 @@ impl GildedRose {
     }
 
     pub fn update_quality(&mut self) {
-        for i in 0..self.items.len() {
-            if self.items[i].name == "Sulfuras, Hand of Ragnaros" {
+        for item in &mut self.items {
+            if item.name == "Sulfuras, Hand of Ragnaros" {
                 continue;
             }
-            self.items[i].sell_in = self.items[i].sell_in - 1;
-            match self.items[i].name.as_str() {
-                "Aged Brie" => {
-                    if self.items[i].sell_in < 0 {
-                        change_item_quality_by(&mut self.items[i], 2);
-                    } else {
-                        change_item_quality_by(&mut self.items[i], 1);
-                    }
-                }
-                "Backstage passes to a TAFKAL80ETC concert" => {
-                    if self.items[i].sell_in >= 0 {
-                        if self.items[i].sell_in < 6 {
-                            change_item_quality_by(&mut self.items[i], 3);
-                        } else if self.items[i].sell_in < 11 {
-                            change_item_quality_by(&mut self.items[i], 2);
-                        } else {
-                            change_item_quality_by(&mut self.items[i], 1);
-                        }
-                    } else {
-                        self.items[i].quality = 0;
-                    }
-                }
-                _ => {
-                    if self.items[i].sell_in < 0 {
-                        change_item_quality_by(&mut self.items[i], -2);
-                    } else {
-                        change_item_quality_by(&mut self.items[i], -1);
-                    }
-                }
+            item.sell_in -= 1;
+            match item.name.as_str() {
+                "Aged Brie" => Self::update_aged_brie(item),
+                "Backstage passes to a TAFKAL80ETC concert" => Self::update_backstage_pass(item),
+                _ => Self::update_normal(item),
             }
         }
+    }
+
+    fn update_aged_brie(item: &mut Item) {
+        let amount = if item.sell_in < 0 { 2 } else { 1 };
+        change_item_quality_by(item, amount);
+    }
+
+    fn update_backstage_pass(item: &mut Item) {
+        if item.sell_in < 0 {
+            item.quality = 0;
+        } else if item.sell_in < 6 {
+            change_item_quality_by(item, 3);
+        } else if item.sell_in < 11 {
+            change_item_quality_by(item, 2);
+        } else {
+            change_item_quality_by(item, 1);
+        }
+    }
+
+    fn update_normal(item: &mut Item) {
+        let amount = if item.sell_in < 0 { -2 } else { -1 };
+        change_item_quality_by(item, amount);
     }
 }
 
