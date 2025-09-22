@@ -1,5 +1,6 @@
 use std::fmt::{self, Display};
 // This file is now lib.rs
+const MAX_QUALITY: i32 = 50;
 pub struct Item {
     pub name: String,
     pub sell_in: i32,
@@ -22,6 +23,15 @@ impl Display for Item {
     }
 }
 
+fn change_item_quality_by(item: &mut Item, amount: i32) {
+        item.quality += amount;
+        if item.quality < 0 {
+            item.quality = 0;
+        } else if item.quality > MAX_QUALITY {
+            item.quality = MAX_QUALITY;
+        }
+    }
+
 pub struct GildedRose {
     pub items: Vec<Item>,
 }
@@ -40,29 +50,19 @@ impl GildedRose {
             match self.items[i].name.as_str() {
                 "Aged Brie" => {
                     if self.items[i].sell_in < 0 {
-                        if self.items[i].quality < 49 {
-                            self.items[i].quality = self.items[i].quality + 2;
-                        }
+                        change_item_quality_by(&mut self.items[i], 2);
                     } else {
-                        if self.items[i].quality < 50 {
-                            self.items[i].quality = self.items[i].quality + 1;
-                        }
+                        change_item_quality_by(&mut self.items[i], 1);
                     }
                 }
                 "Backstage passes to a TAFKAL80ETC concert" => {
                     if self.items[i].sell_in >= 0 {
-                        if self.items[i].quality < 50 {
-                            if self.items[i].sell_in < 6 {
-                                if self.items[i].quality < 49 {
-                                    self.items[i].quality = self.items[i].quality + 3;
-                                }
-                            } else if self.items[i].sell_in < 11 {
-                                if self.items[i].quality < 48 {
-                                    self.items[i].quality = self.items[i].quality + 2;
-                                }
-                            } else {
-                                self.items[i].quality = self.items[i].quality + 1;
-                            }
+                        if self.items[i].sell_in < 6 {
+                            change_item_quality_by(&mut self.items[i], 3);
+                        } else if self.items[i].sell_in < 11 {
+                            change_item_quality_by(&mut self.items[i], 2);
+                        } else {
+                            change_item_quality_by(&mut self.items[i], 1);
                         }
                     } else {
                         self.items[i].quality = 0;
@@ -70,12 +70,9 @@ impl GildedRose {
                 }
                 _ => {
                     if self.items[i].sell_in < 0 {
-                        if self.items[i].quality > 0 {
-                            self.items[i].quality = self.items[i].quality - 1;
-                        }
-                    }
-                    if self.items[i].quality > 0 {
-                        self.items[i].quality = self.items[i].quality - 1;
+                        change_item_quality_by(&mut self.items[i], -2);
+                    } else {
+                        change_item_quality_by(&mut self.items[i], -1);
                     }
                 }
             }
