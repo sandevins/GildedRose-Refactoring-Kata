@@ -24,13 +24,14 @@ impl Display for Item {
 }
 
 fn change_item_quality_by(item: &mut Item, amount: i32) {
-        item.quality += amount;
-        if item.quality < 0 {
-            item.quality = 0;
-        } else if item.quality > MAX_QUALITY {
-            item.quality = MAX_QUALITY;
-        }
+    let multiplier: i32 = if item.name.starts_with("Conjured") { 2 } else { 1 };
+    item.quality += amount * multiplier;
+    if item.quality < 0 {
+        item.quality = 0;
+    } else if item.quality > MAX_QUALITY {
+        item.quality = MAX_QUALITY;
     }
+}
 
 pub struct GildedRose {
     pub items: Vec<Item>,
